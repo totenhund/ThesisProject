@@ -7,6 +7,10 @@ plugins {
     id "dagger.hilt.android.plugin"
 }
 
+def apikeyPropertiesFile = rootProject.file("api.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdk 31
 
@@ -18,6 +22,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "YANDEX_MAP_API", apikeyProperties['YANDEX_MAP_API'])
     }
 
     buildTypes {

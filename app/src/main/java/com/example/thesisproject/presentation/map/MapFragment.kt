@@ -74,7 +74,7 @@ class MapFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("")
+        MapKitFactory.setApiKey(BuildConfig.YANDEX_MAP_API)
         MapKitFactory.initialize(requireContext())
 
         GpsUtils(requireContext(), requireActivity()).turnGPSOn(object : GpsUtils.OnGpsListener {
