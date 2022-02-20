@@ -15,6 +15,8 @@ class LocationLiveData(context: Context) : LiveData<LocationModel>() {
 
     private var fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
+
+
     override fun onInactive() {
         super.onInactive()
         fusedLocationClient.removeLocationUpdates(locationCallback)

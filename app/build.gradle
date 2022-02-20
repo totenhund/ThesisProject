@@ -76,7 +76,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
     // Map
-    implementation 'com.yandex.android:maps.mobile:4.0.0-lite'
+    implementation 'com.yandex.android:maps.mobile:4.0.0-full'
 
 
     // Location

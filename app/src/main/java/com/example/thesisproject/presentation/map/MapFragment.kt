@@ -1,9 +1,9 @@
 package com.example.thesisproject.presentation.map
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -19,13 +19,12 @@ import androidx.fragment.app.viewModels
 import com.example.thesisproject.BuildConfig
 import com.example.thesisproject.R
 import com.example.thesisproject.databinding.FragmentMapBinding
+import com.example.thesisproject.domain.entities.location.LocationModel
+import com.example.thesisproject.presentation.map.mapManager.YandexMapManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_map.*
 
 
 @AndroidEntryPoint
@@ -40,26 +39,31 @@ class MapFragment : Fragment() {
 
     private lateinit var binding: FragmentMapBinding
 
+    private lateinit var mapManager: YandexMapManager
 
     private val mapViewModel by viewModels<MapViewModel>()
 
     private var activityResultLauncher: ActivityResultLauncher<Array<String>>
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private var isGPSEnabled = false
+
 
     init {
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { result ->
             var allAreGranted = true
-            for(b in result.values) {
+            for (b in result.values) {
                 allAreGranted = allAreGranted && b
             }
 
 
             when {
                 allAreGranted -> {
-                    startLocationUpdate()
+                    mapManager.addUserLocationLayer()
+                    setFocusOnUser()
                 }
 
                 else -> {
@@ -74,8 +78,8 @@ class MapFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey(BuildConfig.YANDEX_MAP_API)
-        MapKitFactory.initialize(requireContext())
+
+        mapManager = YandexMapManager(requireContext())
 
         GpsUtils(requireContext(), requireActivity()).turnGPSOn(object : GpsUtils.OnGpsListener {
 
@@ -83,6 +87,8 @@ class MapFragment : Fragment() {
                 isGPSEnabled = isGPSEnable
             }
         })
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
     }
 
@@ -99,41 +105,66 @@ class MapFragment : Fragment() {
             false
         )
 
+        mapManager.setMapView(binding.mapview)
+
+        setControls()
+
+        setFocusOnUser()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requestLocationPermissions()
+    }
 
+
+    private fun setControls() {
+        binding.btnFocusLocation.setOnClickListener {
+            setFocusOnUser()
+        }
+    }
+
+
+    private fun setFocusOnUser() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.also {
+                    mapManager.focusOnUser(LocationModel.fromLocation(it))
+                }
+            }
+    }
+
+
+    private fun requestLocationPermissions() {
         val appPerms = arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
         activityResultLauncher.launch(appPerms)
-
-    }
-
-    private fun startLocationUpdate() {
-        mapViewModel.locationData.observe(this, {
-            binding.mapview.map.move(
-                CameraPosition(Point(it.latitude, it.longitude), 17.0f, 0.0f, 0.0f),
-                Animation(Animation.Type.SMOOTH, 1f),
-                null
-            )
-        })
     }
 
 
     override fun onStop() {
+        mapManager.onStop()
         super.onStop()
-        mapview.onStop()
-        MapKitFactory.getInstance().onStop()
     }
 
     override fun onStart() {
         super.onStart()
-        mapview.onStart()
-        MapKitFactory.getInstance().onStart()
+        mapManager.onStart()
     }
 
 
