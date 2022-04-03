@@ -19,7 +19,8 @@ import androidx.fragment.app.viewModels
 import com.example.thesisproject.BuildConfig
 import com.example.thesisproject.R
 import com.example.thesisproject.databinding.FragmentMapBinding
-import com.example.thesisproject.domain.entities.location.LocationModel
+import com.example.thesisproject.data.entities.LocationModel
+import com.example.thesisproject.domain.network.Resource
 import com.example.thesisproject.presentation.map.mapManager.YandexMapManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -111,12 +112,30 @@ class MapFragment : Fragment() {
 
         setFocusOnUser()
 
+        initEvents()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestLocationPermissions()
+    }
+
+
+    private fun initEvents() {
+        mapViewModel.getEvents().observe(viewLifecycleOwner, { res ->
+            when(res.status) {
+                Resource.Status.SUCCESS -> {
+                    res.data?.forEach { event ->
+                        mapManager.addPlaceMark(event)
+                    }
+                }
+                else -> {
+
+                }
+            }
+        })
     }
 
 

@@ -5,9 +5,14 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.PointF
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import com.example.thesisproject.BuildConfig
 import com.example.thesisproject.R
-import com.example.thesisproject.domain.entities.location.LocationModel
+import com.example.thesisproject.data.entities.Event
+import com.example.thesisproject.data.entities.LocationModel
+import com.example.thesisproject.presentation.map.mapManager.listeners.PinEventOnTapListener
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -25,6 +30,7 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
+import com.yandex.runtime.ui_view.ViewProvider
 
 
 class YandexMapManager(private val context: Context) : MapManager {
@@ -41,7 +47,7 @@ class YandexMapManager(private val context: Context) : MapManager {
     private var locationManager: LocationManager
     private var mapView: MapView? = null
     private var isFocusing: Boolean = true
-    private var cameraListener: CameraListener = CameraListener{ _, _, cameraUpdateReason, _ ->
+    private var cameraListener: CameraListener = CameraListener { _, _, cameraUpdateReason, _ ->
         if (cameraUpdateReason == CameraUpdateReason.GESTURES) {
             isFocusing = false
         }
@@ -58,17 +64,22 @@ class YandexMapManager(private val context: Context) : MapManager {
 
     }
 
+
+    private var pinEventListener = PinEventOnTapListener() {
+
+    }
+
+
     private var userLayer: UserLocationLayer? = null
 
 
-    private var objectListener = object: UserLocationObjectListener {
+    private var objectListener = object : UserLocationObjectListener {
         override fun onObjectAdded(userLocationView: UserLocationView) {
             userLayer?.setAnchor(
                 PointF((mapView!!.width * 0.5).toFloat(), (mapView!!.height * 0.5).toFloat()),
                 PointF((mapView!!.width * 0.5).toFloat(), (mapView!!.height * 0.83).toFloat())
             )
 
-            Log.e("MAP_MANAGER", "ICON IS ADDED")
 
             userLocationView.arrow.setIcon(
                 ImageProvider.fromResource(
@@ -130,8 +141,29 @@ class YandexMapManager(private val context: Context) : MapManager {
     }
 
 
-    override fun addPlaceMark(location: LocationModel) {
-
+    override fun addPlaceMark(event: Event) {
+        mapView?.map?.mapObjects?.addPlacemark(
+            Point(
+                event.location.longitude,
+                event.location.latitude
+            ),
+            ViewProvider(View(context).apply {
+                background = when (event.emergency) {
+                    Event.Emergency.LIGHT -> {
+                        AppCompatResources.getDrawable(context, R.drawable.light_emergency)
+                    }
+                    Event.Emergency.MEDIUM -> {
+                        AppCompatResources.getDrawable(context, R.drawable.medium_emergency)
+                    }
+                    Event.Emergency.HIGH -> {
+                        AppCompatResources.getDrawable(context, R.drawable.high_emergency)
+                    }
+                }
+            })
+        )?.addTapListener { obj, point ->
+            Toast.makeText(context, event.title, Toast.LENGTH_SHORT).show()
+            true
+        }
     }
 
     override fun addOnTapListener(listener: InputListener) {

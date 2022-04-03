@@ -1,7 +1,8 @@
 package com.example.thesisproject.presentation.map.mapManager
 
 
-import com.example.thesisproject.domain.entities.location.LocationModel
+import com.example.thesisproject.data.entities.Event
+import com.example.thesisproject.data.entities.LocationModel
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.mapview.MapView
 
@@ -9,7 +10,7 @@ interface MapManager {
 
     fun focusOnUser(location: LocationModel)
 
-    fun addPlaceMark(location: LocationModel)
+    fun addPlaceMark(event: Event)
 
     fun addOnTapListener(listener: InputListener)
 
