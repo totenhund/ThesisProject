@@ -7,4 +7,6 @@ interface EventRepository {
 
     suspend fun getAllEvent(): Response<List<Event>>
 
+    suspend fun addEvent(event: Event): Response<Void>
+
 }

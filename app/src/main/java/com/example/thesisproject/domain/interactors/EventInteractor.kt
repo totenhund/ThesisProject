@@ -8,4 +8,6 @@ class EventInteractor @Inject constructor(private val eventRepository: EventRepo
 
     suspend fun getEvents(): List<Event>? = eventRepository.getAllEvent().body()
 
+    suspend fun addEvent(event: Event) = eventRepository.addEvent(event)
+
 }

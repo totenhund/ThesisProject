@@ -10,4 +10,5 @@ import javax.inject.Singleton
 @Singleton
 class EventRepositoryImpl @Inject constructor (private val eventApi: EventApi): EventRepository {
     override suspend fun getAllEvent(): Response<List<Event>> = eventApi.getEvents()
+    override suspend fun addEvent(event: Event) = eventApi.addEvent(event)
 }

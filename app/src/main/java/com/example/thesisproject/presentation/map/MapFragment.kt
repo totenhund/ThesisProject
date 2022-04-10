@@ -10,17 +10,15 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.thesisproject.BuildConfig
 import com.example.thesisproject.R
 import com.example.thesisproject.databinding.FragmentMapBinding
 import com.example.thesisproject.data.entities.LocationModel
 import com.example.thesisproject.domain.network.Resource
+import com.example.thesisproject.presentation.base.BaseFragment
 import com.example.thesisproject.presentation.map.mapManager.YandexMapManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,11 +27,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MapFragment : Fragment() {
+class MapFragment : BaseFragment() {
 
 
     companion object {
-        const val LOCATION_REQUEST = 100
         const val GPS_REQUEST = 101
     }
 
@@ -44,37 +41,10 @@ class MapFragment : Fragment() {
 
     private val mapViewModel by viewModels<MapViewModel>()
 
-    private var activityResultLauncher: ActivityResultLauncher<Array<String>>
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var isGPSEnabled = false
-
-
-    init {
-        activityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { result ->
-            var allAreGranted = true
-            for (b in result.values) {
-                allAreGranted = allAreGranted && b
-            }
-
-
-            when {
-                allAreGranted -> {
-                    mapManager.addUserLocationLayer()
-                    setFocusOnUser()
-                }
-
-                else -> {
-                    showPermissionIsNeeded()
-                }
-
-            }
-
-        }
-    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +89,19 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requestLocationPermissions()
+        askForPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            onSuccess = {
+                mapManager.addUserLocationLayer()
+                setFocusOnUser()
+            },
+            onDeclined = {
+                showPermissionIsNeeded()
+            }
+        )
     }
 
 
@@ -167,13 +149,6 @@ class MapFragment : Fragment() {
     }
 
 
-    private fun requestLocationPermissions() {
-        val appPerms = arrayOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        activityResultLauncher.launch(appPerms)
-    }
 
 
     override fun onStop() {

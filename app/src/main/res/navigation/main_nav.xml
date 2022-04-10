@@ -8,4 +8,8 @@
         android:id="@+id/mapFragment"
         android:name="com.example.thesisproject.presentation.map.MapFragment"
         android:label="MapFragment" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.thesisproject.presentation.camera.CameraFragment"
+        android:label="CameraFragment" />
 </navigation>
