@@ -3,7 +3,6 @@ package com.example.thesisproject
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.thesisproject.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint

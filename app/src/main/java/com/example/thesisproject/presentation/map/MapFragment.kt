@@ -102,12 +102,14 @@ class MapFragment : BaseFragment() {
                 showPermissionIsNeeded()
             }
         )
+
+
     }
 
 
     private fun initEvents() {
-        mapViewModel.getEvents().observe(viewLifecycleOwner, { res ->
-            when(res.status) {
+        mapViewModel.getEvents().observe(viewLifecycleOwner) { res ->
+            when (res.status) {
                 Resource.Status.SUCCESS -> {
                     res.data?.forEach { event ->
                         mapManager.addPlaceMark(event)
@@ -117,7 +119,7 @@ class MapFragment : BaseFragment() {
 
                 }
             }
-        })
+        }
     }
 
 
@@ -159,6 +161,11 @@ class MapFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         mapManager.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setFocusOnUser()
     }
 
 
