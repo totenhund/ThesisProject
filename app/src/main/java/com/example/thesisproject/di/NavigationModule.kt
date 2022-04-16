@@ -1,10 +1,14 @@
 package com.example.thesisproject.di
 
+import androidx.fragment.app.FragmentActivity
+import com.example.thesisproject.R
 import com.example.thesisproject.presentation.base.navigation.NavRouter
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Cicerone.Companion.create
+import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +26,10 @@ object NavigationModule {
     fun provideRouter(): Router {
         return cicerone.router
     }
+
+//    @Provides
+//    @Singleton
+//    fun provideNavigator(activity: FragmentActivity): Navigator = AppNavigator(activity, R.id.container)
 
     @Provides
     @Singleton

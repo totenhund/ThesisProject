@@ -28,4 +28,6 @@ abstract class BaseFragment: Fragment() {
         }
     }.launch(permission)
 
+    open fun onBackPressed(): Boolean = true
+
 }

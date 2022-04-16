@@ -132,4 +132,5 @@ class CameraFragment : BaseFragment() {
         cameraExecutor.shutdown()
     }
 
+
 }

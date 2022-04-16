@@ -4,11 +4,9 @@ package com.example.thesisproject.presentation.map.mapManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PointF
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
-import com.example.thesisproject.BuildConfig
 import com.example.thesisproject.R
 import com.example.thesisproject.data.entities.Event
 import com.example.thesisproject.data.entities.LocationModel
@@ -122,7 +120,6 @@ class YandexMapManager(private val context: Context) : MapManager {
 
 
     init {
-        MapKitFactory.setApiKey(BuildConfig.YANDEX_MAP_API)
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
