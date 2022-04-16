@@ -102,4 +102,6 @@ dependencies {
     // CameraX View class
     implementation "androidx.camera:camera-view:$camerax_version"
 
+    implementation "com.github.terrakok:cicerone:7.1"
+
 }
