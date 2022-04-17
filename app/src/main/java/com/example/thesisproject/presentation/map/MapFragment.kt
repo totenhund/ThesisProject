@@ -7,9 +7,11 @@ import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -19,7 +21,9 @@ import com.example.thesisproject.databinding.FragmentMapBinding
 import com.example.thesisproject.data.entities.LocationModel
 import com.example.thesisproject.domain.network.Resource
 import com.example.thesisproject.presentation.base.BaseFragment
+import com.example.thesisproject.presentation.map.addDialog.AddEventDialog
 import com.example.thesisproject.presentation.map.mapManager.YandexMapManager
+import com.example.thesisproject.presentation.map.mapManager.listeners.PinEventOnTapListener
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
@@ -45,6 +49,10 @@ class MapFragment : BaseFragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var isGPSEnabled = false
+
+    private var mapClickedListener = PinEventOnTapListener{
+        showAddEventDialog()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +85,9 @@ class MapFragment : BaseFragment() {
         )
 
         mapManager.setMapView(binding.mapview)
+
+        mapManager.addOnTapListener(mapClickedListener)
+
 
         setControls()
 
@@ -150,7 +161,11 @@ class MapFragment : BaseFragment() {
             }
     }
 
-
+    private var addEventDialog: AddEventDialog? = null
+    private fun showAddEventDialog() {
+        addEventDialog?.dismiss()
+        AddEventDialog(requireContext()).show()
+    }
 
 
     override fun onStop() {

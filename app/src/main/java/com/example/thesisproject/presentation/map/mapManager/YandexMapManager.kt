@@ -10,7 +10,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.example.thesisproject.R
 import com.example.thesisproject.data.entities.Event
 import com.example.thesisproject.data.entities.LocationModel
-import com.example.thesisproject.presentation.map.mapManager.listeners.PinEventOnTapListener
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -59,11 +58,6 @@ class YandexMapManager(private val context: Context) : MapManager {
         override fun onLocationStatusUpdated(locationStatus: LocationStatus) {
 
         }
-
-    }
-
-
-    private var pinEventListener = PinEventOnTapListener() {
 
     }
 
@@ -164,7 +158,7 @@ class YandexMapManager(private val context: Context) : MapManager {
     }
 
     override fun addOnTapListener(listener: InputListener) {
-
+        mapView?.map?.addInputListener(listener)
     }
 
     override fun onZooming(zoomValue: Int) {
