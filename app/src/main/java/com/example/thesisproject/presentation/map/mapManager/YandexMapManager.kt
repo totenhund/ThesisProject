@@ -81,14 +81,14 @@ class YandexMapManager(private val context: Context) : MapManager {
 
             val pinIcon = userLocationView.pin.useCompositeIcon()
 
-            pinIcon.setIcon(
-                "icon",
-                ImageProvider.fromResource(context, R.drawable.icon),
-                IconStyle().setAnchor(PointF(0f, 0f))
-                    .setRotationType(RotationType.ROTATE)
-                    .setZIndex(0f)
-                    .setScale(1f)
-            )
+//            pinIcon.setIcon(
+//                "icon",
+//                ImageProvider.fromResource(context, R.drawable.icon),
+//                IconStyle().setAnchor(PointF(0f, 0f))
+//                    .setRotationType(RotationType.ROTATE)
+//                    .setZIndex(0f)
+//                    .setScale(1f)
+//            )
 
             pinIcon.setIcon(
                 "pin",

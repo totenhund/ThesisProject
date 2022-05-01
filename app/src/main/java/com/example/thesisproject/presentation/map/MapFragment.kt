@@ -127,7 +127,7 @@ class MapFragment : BaseFragment() {
                     }
                 }
                 else -> {
-
+                    Log.e("Database", res.message.toString())
                 }
             }
         }

@@ -1,9 +1,16 @@
 package com.example.thesisproject.di
 
 import com.example.thesisproject.data.api.EventApi
+import com.example.thesisproject.domain.interactors.AuthInteractor
 import com.example.thesisproject.domain.interactors.EventInteractor
+import com.example.thesisproject.domain.interactors.RealtimeDatabaseInteractor
 import com.example.thesisproject.domain.repositories.EventRepository
 import com.example.thesisproject.domain.repositories.impl.EventRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +57,22 @@ object AppModule {
             }
         ).build()
     }
+
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
+
+    @Provides
+    @Singleton
+    fun provideAuthInteractor(auth: FirebaseAuth): AuthInteractor = AuthInteractor(auth)
+
+    @Provides
+    @Singleton
+    fun provideRealtimeDatabase(): FirebaseDatabase = Firebase.database
+
+    @Provides
+    @Singleton
+    fun provideRealtimeDatabaseInteractor(database: FirebaseDatabase): RealtimeDatabaseInteractor = RealtimeDatabaseInteractor(database)
 
 }
